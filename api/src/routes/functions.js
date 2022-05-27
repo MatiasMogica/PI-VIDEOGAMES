@@ -34,6 +34,7 @@ const apiInfo = allApiInfo.map((i) => {
         name: i.name,
         released: i.released,
         rating: i.rating,
+        genres: i.genres.map((g) => g.name),
         plataforms: i.parent_platforms.map((e) => e.platform.name),
         img: i.background_image
     }
@@ -50,7 +51,8 @@ const getVgDescription = async (id) => {
             name: info.name,
             released: info.released,
             rating: info.rating,
-            plataforms: info.parent_platforms.map((e) => e.platform.name),
+            genres: info.genres.map((g) => g.name),
+            plataforms: info.parent_platforms.map((p) => p.platform.name),
             img: info.background_image,
             description: info.description
         }
