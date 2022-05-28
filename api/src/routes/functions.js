@@ -12,13 +12,13 @@ const getApiInfo = async () => {
         apiUrl5 = []
 
 
-Promise.all(
+Promise.all([
     (apiUrl1 = await axios.get(url)),
     (apiUrl2 = await axios.get(`${url}&page2`)),
     (apiUrl3 = await axios.get(`${url}&page3`)),
     (apiUrl4 = await axios.get(`${url}&page4`)),
     (apiUrl5 = await axios.get(`${url}&page5`))
-)
+])
 
 let allApiInfo = [
     ...apiUrl1.data.results,
@@ -39,13 +39,15 @@ const apiInfo = allApiInfo.map((i) => {
         img: i.background_image
     }
 })
-return apiInfo 
+return apiInfo
+//console.log('ESTO ES API INFO', apiInfo) 
 }
 
 const getVgDescription = async (id) => {
     try {
         const vgDescription = await axios.get(`https://api.rawg.io/api/games/${id}?key=${API_KEY}`)
         const info =  await vgDescription.data;
+        //console.log('ESTA ES LA INFO',info)
         const vgDetail = {
             id: info.id,
             name: info.name,
@@ -57,6 +59,7 @@ const getVgDescription = async (id) => {
             description: info.description
         }
         return vgDetail
+        //console.log('ESTO ESSSSS', vgDetail)
     } catch (error) {
         return error
     }

@@ -5,13 +5,14 @@ const express = require('express')
 // Ejemplo: const authRouter = require('./auth.js');
 const {Videogame, Genders, Plataform} = require('../db');
 const { getAllVideogames, getAllVgDetail} = require('./functions')
+const { API_KEY } = process.env;
 
 const router = Router();
 
 // Configurar los routers
 // Ejemplo: router.use('/auth', authRouter);
 
-router.get('/videogames', async (res, req, next) => {
+router.get('/videogames', async (req, res) => {
     let { name } = req.query 
     let totalVg = await getAllVideogames()
     if (name) {
@@ -67,20 +68,36 @@ router.post('/videogame', async (req, res, next) => {
     }
 })
 
-router.get('/genres', async (req, res) => {
+router.get('/genres', async (req, res, next) => {
     let url = `https://api.rawg.io/api/genres?key=${API_KEY}`
-    let genreApi = await axios.get(url);
-    let genre = genreApi.data.results.map((e) => e.name);
-    let id = genreApi.data.results.map((e) => e.id);
+    let genreApi = await axios.get(url)
+    let genre = genreApi.data.results.map((g) => g.name)
+    let id = genreApi.data.results.map((i) => i.id)
   
     genre.forEach((e, i) => {
       Genders.findOrCreate({
         where: { name: e, id: id[i] },
-      });
-    });
+      })
+    })
   
-    let allGenres = await Genders.findAll({ order: [['name', 'ASC']] });
-    res.send(allGenres);
-  });
+    let allGenres = await Genders.findAll({ order: [['name', 'ASC']] })
+    res.send(allGenres)
+  })
+
+router.get('/plataforms', async (req, res, next) => {
+    let url = `https://api.rawg.io/api/platforms/lists/parents?key=${API_KEY}`
+    let plataformApi = await axios.get(url)
+    let plataform = plataformApi.data.results.map((p) => p.name)
+    let id = plataformApi.data.results.map((i) => i.id)
+
+    plataform.forEach((e, i) => {
+        Plataform.findOrCreate({
+          where: { name: e, id: id[i] },
+        })
+      })
+    
+      const allPlatforms = await Plataform.findAll({ order: [['name', 'ASC']] });
+      res.send(allPlatforms)
+})
 
 module.exports = router;
